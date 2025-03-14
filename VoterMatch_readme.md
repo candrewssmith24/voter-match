@@ -1,6 +1,7 @@
 # 2024 Voter Match Application
 
 A Python-based web application that helps voters find political candidates who best align with their views on key policy issues.
+Created by Carrie Andrews-Smith, Aysha Zayyad, Pawarisa Sears
 
 ## Overview
 
