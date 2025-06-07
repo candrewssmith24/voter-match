@@ -229,7 +229,7 @@ def load_document(path):
     except Exception as e:
         print(f"Error loading document at {path}: {e}")
         return None
-
+#TODO: Change paths to pull from scraped_data folder
 doc_2016 = load_document(r"C:\Users\az2088\OneDrive - UNC-Wilmington\Documents\DSCLLM\2016_presidential_candidate_stances.docx")
 doc_2020 = load_document(r"C:\Users\az2088\OneDrive - UNC-Wilmington\Documents\DSCLLM\2020_presidential_candidate_stances.docx")
 doc_2024 = load_document(r"C:\Users\az2088\OneDrive - UNC-Wilmington\Documents\DSCLLM\2024_presidential_candidate_stances.docx")

@@ -4,10 +4,12 @@ Branch plan:
     - Modules:
         - Web scrapers (BeautifulSoup, etc.)
         - NLPs
-        - Streamlit/apps
+        - Streamlit/Gradio/apps
         - Others if needed
     
 - Create utility files.
+
+- Create folder for candidate data.
 
 - Add more websites to web scraping module. Currently scrapes only ballotpedia.com.
 
