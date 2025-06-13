@@ -161,8 +161,8 @@ def write_to_word(candidates_stances):
             doc.add_heading(topic, level=2)
             doc.add_paragraph(stance)
 
-    doc.save('Presidential_Candidate_Stances_2016.docx')
-    print("\nPolicy stances have been written to 'Presidential_Candidate_Stances_2016.docx'.")
+    doc.save('C:\\Users\\andia\\Desktop\\GitHub\\voter-match\\scraped_data\\presidential\\2016_presidential_candidate_stances.docx')
+    print("\nPolicy stances have been written to '2016_presidential_candidate_stances.docx'.")
 
 def main():
     base_url = 'https://ballotpedia.org/Presidential_election,_2016'

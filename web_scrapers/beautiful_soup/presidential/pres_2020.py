@@ -119,12 +119,12 @@ def main():
 
     if len(candidate_topics) < 2:
         print("Not enough candidates with policy positions for comparison.")
-        doc.save('2020_presidential_candidate_stances.docx')
+        doc.save('C:\\Users\\andia\\Desktop\\GitHub\\voter-match\\scraped_data\\presidential\\2020_presidential_candidate_stances.docx')
         return
 
     compare_topics(candidate_topics)
     find_common_topics(candidate_topics)
-    doc.save('2020_presidential_candidate_stances.docx')
+    doc.save('C:\\Users\\andia\\Desktop\\GitHub\\voter-match\\scraped_data\\presidential\\2020_presidential_candidate_stances.docx')
     print("All candidate stances have been written to 2020_presidential_candidate_stances.docx")
 
 if __name__ == '__main__':
