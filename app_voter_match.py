@@ -12,17 +12,16 @@
 
 # Import necessary libraries
 import re
+import nltk
+import os
+import json
+import logging
+import gradio as gr
 from docx import Document
 from collections import defaultdict
 from nltk.corpus import stopwords
 from nltk.tokenize import TreebankWordTokenizer
 from nltk.stem import WordNetLemmatizer
-import nltk
-import os
-import json
-from docx import Document
-import gradio as gr
-import logging
 
 
 # # Ensure NLTK resources are downloaded
@@ -229,11 +228,10 @@ def load_document(path):
     except Exception as e:
         print(f"Error loading document at {path}: {e}")
         return None
-#TODO: Change paths to pull from scraped_data folder
-doc_2016 = load_document(r"C:\Users\az2088\OneDrive - UNC-Wilmington\Documents\DSCLLM\2016_presidential_candidate_stances.docx")
-doc_2020 = load_document(r"C:\Users\az2088\OneDrive - UNC-Wilmington\Documents\DSCLLM\2020_presidential_candidate_stances.docx")
-doc_2024 = load_document(r"C:\Users\az2088\OneDrive - UNC-Wilmington\Documents\DSCLLM\2024_presidential_candidate_stances.docx")
 
+doc_2016 = load_document(r"C:\\Users\\andia\\Desktop\\GitHub\\voter-match\\scraped_data\\presidential\\2016_presidential_candidate_stances.docx")
+doc_2020 = load_document(r"C:\\Users\\andia\\Desktop\\GitHub\\voter-match\\scraped_data\\presidential\\2020_presidential_candidate_stances.docx")
+doc_2024 = load_document(r"C:\\Users\\andia\\Desktop\\GitHub\\voter-match\\scraped_data\\presidential\\2024_presidential_candidate_stances.docx")
 # Extracting Candidate Data
 candidate_data_2016 = extract_candidate_data(doc_2016, '2016') if doc_2016 else {}
 candidate_data_2020 = extract_candidate_data(doc_2020, '2020') if doc_2020 else {}
@@ -253,7 +251,7 @@ save_data(candidate_data_2024, 'candidate_data_2024.json')
 
 # Loading the documents
 # Base directory and file paths
-base_dir = r"C:\Users\az2088\OneDrive - UNC-Wilmington\Documents\DSCLLM"
+base_dir = r"C:\\Users\\andia\\Desktop\\GitHub\\voter-match\\scraped_data\\presidential"
 doc_paths = {
     "2016": os.path.join(base_dir, "2016_presidential_candidate_stances.docx"),
     "2020": os.path.join(base_dir, "2020_presidential_candidate_stances.docx"),
@@ -504,23 +502,42 @@ def match_user_to_candidates(user_input, standardized_candidates):
                         f"Premise: {combined_statements} Hypothesis: {user_stance}",
                         truncation=True
                     )[0]
+                    label = result["label"]
                     score = result["score"]
-                    if score > 0.50:
-                        label = "ENTAILMENT"
-                    elif score == 0.50:
-                        label = "NEUTRAL"
-                    else:
-                        label = "CONTRADICTION"
                     results[candidate][topic] = {"label": label, "score": score}
     return results
 
 
 def aggregate_scores(match_results):
     overall_scores = []
+
     for candidate, topics in match_results.items():
-        total_score = sum(result["score"] for result in topics.values())
-        average_score = total_score / len(topics) if topics else 0
+        total_score = 0
+        count = 0
+
+        for result in topics.values():
+            label = result["label"]
+            score = result["score"]
+
+            if label == "ENTAILMENT" and score > 0.4:
+                total_score += 1
+                count += 1
+            elif label == "ENTAILMENT":
+                total_score += score
+                count += 1
+            elif label == "CONTRADICTION" and score > 0.4:
+                total_score -= (0.1*score)
+                #count += 1
+            elif label == "NEUTRAL" and score > 0.4:
+                total_score += (0.1*score)
+                count += 1
+            else:
+                total_score += 0
+                count += 1
+
+        average_score = total_score / count if count else 0
         overall_scores.append((candidate, average_score))
+
     overall_scores.sort(key=lambda x: x[1], reverse=True)
     return overall_scores
 
