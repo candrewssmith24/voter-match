@@ -1,4 +1,5 @@
 from transformers import pipeline
+#TODO: import the necessary libraries for NLI
 
 def match_user_to_candidates(user_input, standardized_candidates):
     """
@@ -20,17 +21,12 @@ def match_user_to_candidates(user_input, standardized_candidates):
                 user_stance = user_input[topic]
                 combined_statements = " ".join(statements)  # Combine candidate stances
                 if combined_statements:  # Avoid empty premise
-                    result = pipeline(
+                    result = nli_pipeline(
                         f"Premise: {combined_statements} Hypothesis: {user_stance}",
                         truncation=True
                     )[0]
+                    label = result["label"]
                     score = result["score"]
-                    if score > 0.50:
-                        label = "ENTAILMENT"
-                    elif score == 0.50:
-                        label = "NEUTRAL"
-                    else:
-                        label = "CONTRADICTION"
                     results[candidate][topic] = {"label": label, "score": score}
     return results
 
@@ -47,9 +43,33 @@ def aggregate_scores(match_results):
     """
     
     overall_scores = []
+
     for candidate, topics in match_results.items():
-        total_score = sum(result["score"] for result in topics.values())
-        average_score = total_score / len(topics) if topics else 0
+        total_score = 0
+        count = 0
+
+        for result in topics.values():
+            label = result["label"]
+            score = result["score"]
+
+            if label == "ENTAILMENT" and score > 0.4:
+                total_score += 1
+                count += 1
+            elif label == "ENTAILMENT":
+                total_score += score
+                count += 1
+            elif label == "CONTRADICTION" and score > 0.4:
+                total_score -= (0.1*score)
+                #count += 1
+            elif label == "NEUTRAL" and score > 0.4:
+                total_score += (0.1*score)
+                count += 1
+            else:
+                total_score += 0
+                count += 1
+
+        average_score = total_score / count if count else 0
         overall_scores.append((candidate, average_score))
+
     overall_scores.sort(key=lambda x: x[1], reverse=True)
     return overall_scores
