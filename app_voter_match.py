@@ -745,6 +745,7 @@ candidate_urls = {
     "Chase Oliver": "https://ballotpedia.org/Chase_Oliver_presidential_campaign,_2024#Policy_positions"
 }
 
+#TODO: Remove match-user_to_candidates and aggregate_scores functions from here and use the ones in scoring.py
 def match_user_to_candidates(user_input, standardized_candidates):
     results = {}
     for candidate, topics in standardized_candidates.items():
